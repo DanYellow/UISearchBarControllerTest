@@ -44,38 +44,31 @@
     searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
     searchResultsController.tableView.dataSource = self;
     searchResultsController.tableView.delegate = self;
-//    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, -50, searchResultsController.tableView.bounds.size.width, searchResultsController.tableView.bounds.size.height)];
-//    backgroundView.backgroundColor = [UIColor redColor];
-        searchResultsController.tableView.backgroundColor = [UIColor redColor];
+
+    searchResultsController.tableView.backgroundColor = [UIColor redColor];
     searchResultsController.tableView.frame = CGRectMake(0, 100.0, screenWidth, screenHeight);
-    searchResultsController.tableView.rowHeight = UITableViewAutomaticDimension;
-    [searchResultsController.tableView needsUpdateConstraints];//.estimatedRowHeight = 44.0;
     searchResultsController.tableView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin;
-//    searchResultsController.tableView.contentInset = UIEdgeInsetsZero;
-//    searchResultsController.tableView.hidden = NO;
-//    [self.view addSubview:searchResultsController.tableView];
+    searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
     
     
     _searchController = [[UISearchController alloc] initWithSearchResultsController:searchResultsController];
     _searchController.delegate = self;
     _searchController.searchBar.delegate = self;
     _searchController.searchResultsUpdater = self;
+    _searchController.searchBar.searchBarStyle = UISearchBarStyleMinimal;
     _searchController.searchBar.frame = CGRectMake(0, 0.0, self.view.bounds.size.width, 50);
     
     
 //    _searchController.searchBar.showsCancelButton = YES;
-    //    _searchController.dimsBackgroundDuringPresentation = NO;
+    _searchController.dimsBackgroundDuringPresentation = NO;
         [_searchController.searchBar sizeToFit];
     _searchController.searchBar.barTintColor = [UIColor grayColor];
 
     
-    UIView *foo = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
-    foo.backgroundColor = [UIColor clearColor];
+    UIView *uisearchbarBG = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 64)];
+    uisearchbarBG.backgroundColor = [UIColor grayColor];
     
-//    [foo addSubview:_searchController.searchBar];
-//    [self.view addSubview:foo];
-    [self.navigationController.view addSubview:foo];
-    
+    [_searchController.view addSubview:uisearchbarBG];
     [self.view addSubview:_searchController.searchBar];
 
     
@@ -111,8 +104,6 @@
     
     // Sort type in alphabetical order
     categoryList = [[json valueForKeyPath:@"@distinctUnionOfObjects.type"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
-    
-    
     
     //    NSPredicate *bobPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", @"Breaking Bad"];
     //    NSLog(@"Bobs: %@", [json filteredArrayUsingPredicate:bobPredicate]);
@@ -186,6 +177,13 @@
     NSLog(@"%@", type);
 }
 
+- (void)tableView:(UITableView *)tableView willDisplayCell:(UITableViewCell *)cell forRowAtIndexPath:(NSIndexPath *)indexPath {
+    cell.transform = CGAffineTransformMakeScale(0.8, 0.8);
+    [UIView animateWithDuration:0.5 animations:^{
+        cell.transform = CGAffineTransformIdentity;
+    }];
+}
+
 - (CGFloat)tableView:(UITableView *)tableView heightForHeaderInSection:(NSInteger)section {
     if ([tableView.dataSource tableView:tableView numberOfRowsInSection:section] == 0) {
         return 0;
@@ -230,10 +228,12 @@
     [searchResultsController.tableView reloadData];
 }
 
+
 - (void)scrollViewWillBeginDragging:(UIScrollView *)scrollView
 {
     [_searchController.searchBar resignFirstResponder];
 }
+
 
 
 - (void)didReceiveMemoryWarning {
