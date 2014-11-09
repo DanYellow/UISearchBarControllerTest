@@ -14,13 +14,31 @@
 
 @implementation AppDelegate
 
+- (void) removeBottomBarFromNav:(UINavigationBar *) navBar {
+    for (id subView in [navBar subviews]) {
+        for (id subViewInner in [subView subviews])
+        {
+            if ([NSStringFromClass([subView class]) isEqualToString:@"_UINavigationBarBackground"])
+            {
+                if ([subViewInner isKindOfClass:[UIImageView class]]) {
+                    [subViewInner removeFromSuperview];
+                    break;
+                }
+            }
+        }
+    }
+}
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
     
     ViewController *mainViewController = [[ViewController alloc] init];
     UINavigationController *navigationController = [[UINavigationController alloc] initWithRootViewController:mainViewController];
     
-    [navigationController.navigationBar setShadowImage:[UIImage new]];
+//    [navigationController.navigationBar.layer setBorderWidth:0.0];
+//    [navigationController.navigationBar setShadowImage:[UIImage new]];
+//    [navigationController.navigationBar.layer setBorderColor:[[UIColor clearColor] CGColor]];
+    
+    [self removeBottomBarFromNav:navigationController.navigationBar];
     
     
     self.window = [[UIWindow alloc] initWithFrame:[[UIScreen mainScreen] bounds]];

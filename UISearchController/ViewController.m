@@ -8,7 +8,9 @@
 
 #import "ViewController.h"
 
-@interface ViewController ()
+@interface ViewController () {
+    UIView *uisearchbarBG;
+}
 
 @end
 
@@ -16,7 +18,7 @@
 
 - (void) viewDidAppear:(BOOL)animated
 {
-    [self.navigationController.navigationBar setShadowImage:[UIImage new]];
+//    [self.navigationController.navigationBar setShadowImage:[UIImage new]];
 }
 
 - (void) viewDidLoad {
@@ -27,25 +29,23 @@
     CGFloat screenWidth = screenRect.size.width;
     CGFloat screenHeight = screenRect.size.height;
     
-    
     self.definesPresentationContext = YES;
     self.edgesForExtendedLayout = UIRectEdgeNone;
-    self.extendedLayoutIncludesOpaqueBars = NO;
-    self.automaticallyAdjustsScrollViewInsets = NO;
+//    self.extendedLayoutIncludesOpaqueBars = NO;
+//    self.automaticallyAdjustsScrollViewInsets = NO;
+    [self.navigationItem setTitle:@"Search bar \"like\" Calendar"];
+//    [self.navigationController.view setBackgroundColor:[UIColor colorWithRed:0 green:0 blue:0 alpha:0.5]];
     
-//    self.navigationController.view.backgroundColor = [UIColor grayColor];
-//    self.navigationController.navigationBar.translucent = NO;
-    //
-    //    self.view.backgroundColor = [UIColor blueColor];
-    
-    
+
+//    self.navigationController.navigationBar.barTintColor = [UIColor clearColor];
     self.navigationController.navigationBar.translucent = YES;
     
     searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
     searchResultsController.tableView.dataSource = self;
     searchResultsController.tableView.delegate = self;
 
-    searchResultsController.tableView.backgroundColor = [UIColor redColor];
+
+    searchResultsController.tableView.backgroundColor = [UIColor lightGrayColor];
     searchResultsController.tableView.frame = CGRectMake(0, 100.0, screenWidth, screenHeight);
     searchResultsController.tableView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin;
     searchResultsController.tableView.tableFooterView = [[UIView alloc] initWithFrame:CGRectZero];
@@ -56,20 +56,24 @@
     _searchController.searchBar.delegate = self;
     _searchController.searchResultsUpdater = self;
     _searchController.searchBar.searchBarStyle = UISearchBarStyleMinimal;
-    _searchController.searchBar.frame = CGRectMake(0, 0.0, self.view.bounds.size.width, 50);
+//    _searchController.searchBar.frame = CGRectMake(0, 0.0, self.view.bounds.size.width, 50);
     
-    
-//    _searchController.searchBar.showsCancelButton = YES;
-    _searchController.dimsBackgroundDuringPresentation = NO;
-        [_searchController.searchBar sizeToFit];
+    _searchController.dimsBackgroundDuringPresentation = YES;
+    [_searchController.searchBar sizeToFit];
+    _searchController.searchBar.hidden = NO;
+    _searchController.searchBar.keyboardAppearance = UIKeyboardAppearanceDark;
     _searchController.searchBar.barTintColor = [UIColor grayColor];
+    _searchController.searchBar.tintColor = [UIColor whiteColor];
 
     
-    UIView *uisearchbarBG = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 64)];
+    uisearchbarBG = [[UIView alloc] initWithFrame:CGRectMake(0, -50, screenWidth, 64)];
+    uisearchbarBG.tag = 42;
     uisearchbarBG.backgroundColor = [UIColor grayColor];
     
     [_searchController.view addSubview:uisearchbarBG];
     [self.view addSubview:_searchController.searchBar];
+    
+    _searchController.searchBar.frame = CGRectMake(0, -50, _searchController.searchBar.frame.size.width, _searchController.searchBar.frame.size.height);
 
     
     UIView *inputTriggerView = [[UIView alloc] initWithFrame:CGRectMake(0, 250, 320, 100)];
@@ -105,10 +109,7 @@
     // Sort type in alphabetical order
     categoryList = [[json valueForKeyPath:@"@distinctUnionOfObjects.type"] sortedArrayUsingSelector:@selector(localizedCaseInsensitiveCompare:)];
     
-    //    NSPredicate *bobPredicate = [NSPredicate predicateWithFormat:@"name BEGINSWITH[c] %@", @"Breaking Bad"];
-    //    NSLog(@"Bobs: %@", [json filteredArrayUsingPredicate:bobPredicate]);
-    
-    
+
     _filteredTableData = [[NSMutableDictionary alloc] init];
 }
 
@@ -119,7 +120,17 @@
 
 
 - (void) appearsSearchBar {
+//    UIView *uisearchbarBG = (UIView*)[self.view viewWithTag:42];
     _searchController.searchBar.hidden = NO;
+    [UIView animateWithDuration: 0.5
+                          delay: 0.3
+                        options: UIViewAnimationOptionCurveEaseOut
+                     animations:^{
+                         _searchController.searchBar.frame = CGRectMake(0, 0, _searchController.searchBar.frame.size.width, _searchController.searchBar.frame.size.height);
+                         uisearchbarBG.frame = CGRectMake(0, 0, 320, 64);
+                     }
+                     completion:nil];
+//    _searchController.searchBar.hidden = NO;
     [searchResultsController.tableView setContentInset:UIEdgeInsetsMake(50,0,0,0)];
     [_searchController.searchBar becomeFirstResponder];
 }
@@ -148,7 +159,8 @@
     
     cell.backgroundColor = [UIColor redColor];
 //    cell.textLabel.text = (NSString*)[[filteredNames valueForKey:@"name"] objectAtIndex:indexPath.row];
-    cell.detailTextLabel.text = @"foo description";
+    cell.detailTextLabel.text = @"2008";
+//    NSLog(@"%i", cell.textLabel.font)
     
     NSString *sectionTitle = [categoryList objectAtIndex:indexPath.section];
     NSArray *sectionAnimals = [_filteredTableData objectForKey:sectionTitle];
@@ -193,7 +205,19 @@
 }
 
 - (void) searchBarCancelButtonClicked:(UISearchBar *) searchBar {
-//    _searchController.searchBar.hidden = YES;
+    
+    [UIView animateWithDuration: 0.3
+                          delay: 0.0
+                        options: UIViewAnimationOptionCurveLinear
+                     animations:^{
+                         
+                         _searchController.searchBar.frame = CGRectMake(0, -50, _searchController.searchBar.frame.size.width, _searchController.searchBar.frame.size.height);
+                         uisearchbarBG.frame = CGRectMake(0, -50, 320, 64);
+                     }
+                     completion:^(BOOL finished){
+                         _searchController.searchBar.hidden = YES;
+                     }];
+    
     [searchBar resignFirstResponder];
 }
 
