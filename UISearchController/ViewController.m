@@ -40,57 +40,44 @@
     
     
     self.navigationController.navigationBar.translucent = YES;
-
     
     searchResultsController = [[UITableViewController alloc] initWithStyle:UITableViewStylePlain];
     searchResultsController.tableView.dataSource = self;
     searchResultsController.tableView.delegate = self;
-    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, -50, searchResultsController.tableView.bounds.size.width, searchResultsController.tableView.bounds.size.height)];
-    backgroundView.backgroundColor = [UIColor redColor];
+//    UIView *backgroundView = [[UIView alloc] initWithFrame:CGRectMake(0, -50, searchResultsController.tableView.bounds.size.width, searchResultsController.tableView.bounds.size.height)];
+//    backgroundView.backgroundColor = [UIColor redColor];
         searchResultsController.tableView.backgroundColor = [UIColor redColor];
-    searchResultsController.tableView.frame = CGRectMake(0, 10.0, screenWidth, screenHeight);
-    searchResultsController.tableView.contentInset = UIEdgeInsetsZero;
-    searchResultsController.tableView.hidden = NO;
+    searchResultsController.tableView.frame = CGRectMake(0, 100.0, screenWidth, screenHeight);
+    searchResultsController.tableView.rowHeight = UITableViewAutomaticDimension;
+    [searchResultsController.tableView needsUpdateConstraints];//.estimatedRowHeight = 44.0;
+    searchResultsController.tableView.autoresizingMask = UIViewAutoresizingFlexibleBottomMargin | UIViewAutoresizingFlexibleLeftMargin | UIViewAutoresizingFlexibleRightMargin | UIViewAutoresizingFlexibleTopMargin;
+//    searchResultsController.tableView.contentInset = UIEdgeInsetsZero;
+//    searchResultsController.tableView.hidden = NO;
+//    [self.view addSubview:searchResultsController.tableView];
     
     
     _searchController = [[UISearchController alloc] initWithSearchResultsController:searchResultsController];
     _searchController.delegate = self;
-//    _searchController.searchBar.delegate = self;
+    _searchController.searchBar.delegate = self;
     _searchController.searchResultsUpdater = self;
-    _searchController.searchBar.userInteractionEnabled = YES;
     _searchController.searchBar.frame = CGRectMake(0, 0.0, self.view.bounds.size.width, 50);
-    //    [_searchController.navigationController setNavigationBarHidden: NO animated: NO];
     
     
-        _searchController.searchBar.showsCancelButton = YES;
+//    _searchController.searchBar.showsCancelButton = YES;
     //    _searchController.dimsBackgroundDuringPresentation = NO;
         [_searchController.searchBar sizeToFit];
     _searchController.searchBar.barTintColor = [UIColor grayColor];
-  
-    //    _searchController.searchBar.backgroundColor = [UIColor grayColor];
-    //    _searchController.searchBar.tintColor = [UIColor blackColor];
-    //    _searchController.searchBar.searchBarStyle = UISearchBarStyleDefault;
-    //    _searchController.searchBar.hidden = YES;
-    [_searchController.navigationController setNavigationBarHidden:NO animated:NO];
+
     
-    
-    
-    
-    //    [self.view addSubview:searchResultsController.tableView];
-    //    searchResultsController.tableView.tableHeaderView = searchController.searchBar;
-    UIView *foo = [[UIView alloc] initWithFrame:CGRectMake(0, 70, screenWidth, 50)];
-    foo.backgroundColor = [UIColor redColor];
+    UIView *foo = [[UIView alloc] initWithFrame:CGRectMake(0, 0, screenWidth, 50)];
+    foo.backgroundColor = [UIColor clearColor];
     
 //    [foo addSubview:_searchController.searchBar];
+//    [self.view addSubview:foo];
+    [self.navigationController.view addSubview:foo];
+    
     [self.view addSubview:_searchController.searchBar];
-//    [self.view addSubview:searchResultsController.tableView];
-    
-//    searchResultsController.tableView.tableHeaderView = _searchController.searchBar;
-    
-//    self.navigationItem.titleView = _searchController.searchBar;
-    
-//        [self.navigationController.navigationBar addSubview:_searchController.searchBar];
-//        self.navigationController.navigationItem.titleView = _searchController.searchBar;
+
     
     UIView *inputTriggerView = [[UIView alloc] initWithFrame:CGRectMake(0, 250, 320, 100)];
     inputTriggerView.backgroundColor = [UIColor colorWithRed:226.0/255.0 green:255.0 blue:238.0/255.0 alpha:1];
@@ -195,7 +182,7 @@
 - (void) tableView: (UITableView *) tableView didSelectRowAtIndexPath: (NSIndexPath *) indexPath {
     UITableViewCell *cell = [tableView cellForRowAtIndexPath:indexPath];
     NSString *type = (NSString*)[categoryList objectAtIndex:indexPath.section];
-    NSString *cellText = cell.textLabel.text;
+//    NSString *cellText = cell.textLabel.text;
     NSLog(@"%@", type);
 }
 
@@ -214,7 +201,7 @@
 
 
 - (void) updateSearchResultsForSearchController:(UISearchController *) searchController {
-    
+    searchResultsController.tableView.frame = CGRectMake(0, 0.0, CGRectGetWidth(searchResultsController.tableView.frame), CGRectGetHeight(searchResultsController.tableView.frame));
     NSString *searchString = [searchController.searchBar text];
     
     [filteredNames removeAllObjects]; // Can be intern
